@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.termux"
+    package="com.learnprogramming.codecamp"
     android:installLocation="internalOnly"
     android:sharedUserId="${TERMUX_PACKAGE_NAME}"
     android:sharedUserLabel="@string/shared_user_label">
@@ -24,7 +24,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -34,10 +36,12 @@
     <uses-permission android:name="android.permission.DUMP" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".app.TermuxApplication"
+        android:name="com.learnprogramming.codecamp.app.TermuxApplication"
         android:allowBackup="false"
         android:banner="@drawable/banner"
         android:extractNativeLibs="true"
@@ -50,9 +54,9 @@
         tools:targetApi="m">
 
         <activity
-            android:name=".app.TermuxActivity"
-            android:exported="true"
+            android:name="com.learnprogramming.codecamp.app.TermuxActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|keyboard|keyboardHidden|navigation"
+            android:exported="true"
             android:label="@string/application_name"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
@@ -77,7 +81,7 @@
         <activity-alias
             android:name=".HomeActivity"
             android:exported="true"
-            android:targetActivity=".app.TermuxActivity">
+            android:targetActivity="com.learnprogramming.codecamp.app.TermuxActivity">
 
             <!-- Launch activity automatically on boot on Android Things devices -->
             <intent-filter>
@@ -89,26 +93,26 @@
         </activity-alias>
 
         <activity
-            android:name=".app.activities.HelpActivity"
+            android:name="com.learnprogramming.codecamp.app.activities.HelpActivity"
             android:exported="false"
             android:label="@string/application_name"
-            android:parentActivityName=".app.TermuxActivity"
+            android:parentActivityName="com.learnprogramming.codecamp.app.TermuxActivity"
             android:resizeableActivity="true"
             tools:targetApi="n" />
 
         <activity
-            android:name=".app.activities.SettingsActivity"
+            android:name="com.learnprogramming.codecamp.app.activities.SettingsActivity"
             android:exported="true"
             android:label="@string/title_activity_termux_settings"
             android:theme="@style/Theme.TermuxApp.DayNight.NoActionBar" />
 
         <activity
-            android:name=".shared.activities.ReportActivity"
-            android:theme="@style/Theme.MarkdownViewActivity.DayNight"
-            android:documentLaunchMode="intoExisting" />
+            android:name="com.termux.shared.activities.ReportActivity"
+            android:documentLaunchMode="intoExisting"
+            android:theme="@style/Theme.MarkdownViewActivity.DayNight" />
 
         <activity
-            android:name=".filepicker.TermuxFileReceiverActivity"
+            android:name="com.learnprogramming.codecamp.filepicker.TermuxFileReceiverActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/application_name"
@@ -147,7 +151,7 @@
 
 
         <provider
-            android:name=".filepicker.TermuxDocumentsProvider"
+            android:name="com.learnprogramming.codecamp.filepicker.TermuxDocumentsProvider"
             android:authorities="${TERMUX_PACKAGE_NAME}.documents"
             android:exported="true"
             android:grantUriPermissions="true"
@@ -158,7 +162,7 @@
         </provider>
 
         <provider
-            android:name=".app.TermuxOpenReceiver$ContentProvider"
+            android:name="com.learnprogramming.codecamp.app.TermuxOpenReceiver$ContentProvider"
             android:authorities="${TERMUX_PACKAGE_NAME}.files"
             android:exported="true"
             android:grantUriPermissions="true"
@@ -166,20 +170,20 @@
 
 
         <receiver
-            android:name=".app.TermuxOpenReceiver"
+            android:name="com.learnprogramming.codecamp.app.TermuxOpenReceiver"
             android:exported="false" />
 
         <receiver
-            android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"
+            android:name="com.termux.shared.activities.ReportActivity$ReportActivityBroadcastReceiver"
             android:exported="false" />
 
 
         <service
-            android:name=".app.TermuxService"
+            android:name="com.learnprogramming.codecamp.app.TermuxService"
             android:exported="false" />
 
         <service
-            android:name=".app.RunCommandService"
+            android:name="com.learnprogramming.codecamp.app.RunCommandService"
             android:exported="true"
             android:permission="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND">
             <intent-filter>

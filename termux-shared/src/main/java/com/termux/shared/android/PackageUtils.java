@@ -598,7 +598,7 @@ public class PackageUtils {
      * {@code
      * <manifest
      *     <queries>
-     *         <package android:name="com.termux" />
+     *         <package android:name="com.learnprogramming.codecamp" />
      *    </queries>
      *
      *    <application
