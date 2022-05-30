@@ -11,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.util.Pair;
 import android.view.WindowManager;
@@ -60,7 +61,9 @@ final class TermuxInstaller {
 
     private static final String LOG_TAG = "TermuxInstaller";
 
-    /** Performs bootstrap setup if necessary. */
+    /**
+     * Performs bootstrap setup if necessary.
+     */
     static void setupBootstrapIfNeeded(final Activity activity, final Runnable whenDone) {
         String bootstrapErrorMessage;
         Error filesDirectoryAccessibleError;
@@ -103,9 +106,9 @@ final class TermuxInstaller {
 
         // If prefix directory exists, even if its a symlink to a valid directory and symlink is not broken/dangling
         if (FileUtils.directoryFileExists(TERMUX_PREFIX_DIR_PATH, true)) {
-            File[] PREFIX_FILE_LIST =  TERMUX_PREFIX_DIR.listFiles();
+            File[] PREFIX_FILE_LIST = TERMUX_PREFIX_DIR.listFiles();
             // If prefix directory is empty or only contains the tmp directory
-            if(PREFIX_FILE_LIST == null || PREFIX_FILE_LIST.length == 0 || (PREFIX_FILE_LIST.length == 1 && TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH.equals(PREFIX_FILE_LIST[0].getAbsolutePath()))) {
+            if (PREFIX_FILE_LIST == null || PREFIX_FILE_LIST.length == 0 || (PREFIX_FILE_LIST.length == 1 && TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH.equals(PREFIX_FILE_LIST[0].getAbsolutePath()))) {
                 Logger.logInfo(LOG_TAG, "The termux prefix directory \"" + TERMUX_PREFIX_DIR_PATH + "\" exists but is empty or only contains the tmp directory.");
             } else {
                 whenDone.run();
@@ -215,6 +218,29 @@ final class TermuxInstaller {
 
                     if (!TERMUX_STAGING_PREFIX_DIR.renameTo(TERMUX_PREFIX_DIR)) {
                         throw new RuntimeException("Moving termux prefix staging to prefix directory failed");
+                    }
+
+                    //link from native directory
+                    File[] bins = new File(activity.getApplicationInfo().nativeLibraryDir).listFiles();
+
+                    if (bins != null) {
+                        for (File file : bins) {
+                            String fileName = file.getName().replaceFirst("lib", "").replace(".so", "");
+                            File prefixDir = new File(activity.getApplicationContext().getFilesDir().getAbsolutePath() + "/usr");
+
+                            File target = new File(prefixDir, fileName.replace("_", "/"));
+
+                            if (target.exists()) {
+                                target.delete();
+                            }
+
+                            try {
+                                Os.symlink(file.getAbsolutePath(), target.getAbsolutePath());
+                                Logger.logInfo(LOG_TAG, "creating symlink => " + file.getAbsolutePath() + " -> " + target.getAbsolutePath());
+                            } catch (ErrnoException e) {
+                                Logger.logInfo(LOG_TAG, "creating symlink error => " + fileName + ", " + target.getAbsolutePath());
+                            }
+                        }
                     }
 
                     Logger.logInfo(LOG_TAG, "Bootstrap packages installed successfully.");

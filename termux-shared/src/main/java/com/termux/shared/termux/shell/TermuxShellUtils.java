@@ -72,6 +72,8 @@ public class TermuxShellUtils {
         if (TERMUX_API_VERSION_NAME != null)
             environment.add("TERMUX_API_VERSION=" + TERMUX_API_VERSION_NAME);
 
+        environment.add("NATIVE_DIR=" + currentPackageContext.getApplicationInfo().nativeLibraryDir);
+
         environment.add("TERM=xterm-256color");
         environment.add("COLORTERM=truecolor");
         environment.add("HOME=" + TermuxConstants.TERMUX_HOME_DIR_PATH);
@@ -175,7 +177,7 @@ public class TermuxShellUtils {
         // termux-reset (d6eb5e35). Moreover, TMPDIR must be a directory and not a symlink, this can
         // also allow users who don't want TMPDIR to be cleared automatically on termux exit, since
         // it may remove files still being used by background processes (#1159).
-        if(onlyIfExists && !FileUtils.directoryFileExists(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, false))
+        if (onlyIfExists && !FileUtils.directoryFileExists(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, false))
             return;
 
         Error error;

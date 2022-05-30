@@ -210,6 +210,7 @@ def downloadBootstrap(String arch, String expectedChecksum, String version) {
 }
 
 clean {
+    return
     doLast {
         def tree = fileTree(new File(projectDir, 'src/main/cpp'))
         tree.include 'bootstrap-*.zip'
@@ -218,6 +219,7 @@ clean {
 }
 
 task downloadBootstraps() {
+    return
     doLast {
         def packageVariant = project.ext.packageVariant
         if (packageVariant == "apt-android-7") {
