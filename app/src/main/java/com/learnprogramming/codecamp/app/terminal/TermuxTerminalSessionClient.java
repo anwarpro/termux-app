@@ -109,12 +109,12 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
 
-
     @Override
     public void onTextChanged(@NonNull TerminalSession changedSession) {
         if (!mActivity.isVisible()) return;
 
-        if (mActivity.getCurrentSession() == changedSession) mActivity.getTerminalView().onScreenUpdated();
+        if (mActivity.getCurrentSession() == changedSession)
+            mActivity.getTerminalView().onScreenUpdated();
     }
 
     @Override
@@ -192,7 +192,8 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
         ClipData clipData = clipboard.getPrimaryClip();
         if (clipData != null) {
             CharSequence paste = clipData.getItemAt(0).coerceToText(mActivity);
-            if (!TextUtils.isEmpty(paste)) mActivity.getTerminalView().mEmulator.paste(paste.toString());
+            if (!TextUtils.isEmpty(paste))
+                mActivity.getTerminalView().mEmulator.paste(paste.toString());
         }
     }
 
@@ -255,15 +256,15 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
 
-
     @Override
     public Integer getTerminalCursorStyle() {
         return mActivity.getProperties().getTerminalCursorStyle();
     }
 
 
-
-    /** Load mBellSoundPool */
+    /**
+     * Load mBellSoundPool
+     */
     private synchronized void loadBellSoundPool() {
         if (mBellSoundPool == null) {
             mBellSoundPool = new SoundPool.Builder().setMaxStreams(1).setAudioAttributes(
@@ -272,14 +273,16 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
             try {
                 mBellSoundId = mBellSoundPool.load(mActivity, R.raw.bell, 1);
-            } catch (Exception e){
+            } catch (Exception e) {
                 // Catch java.lang.RuntimeException: Unable to resume activity {com.termux/com.termux.app.TermuxActivity}: android.content.res.Resources$NotFoundException: File res/raw/bell.ogg from drawable resource ID
                 Logger.logStackTraceWithMessage(LOG_TAG, "Failed to load bell sound pool", e);
             }
         }
     }
 
-    /** Release mBellSoundPool resources */
+    /**
+     * Release mBellSoundPool resources
+     */
     private synchronized void releaseBellSoundPool() {
         if (mBellSoundPool != null) {
             mBellSoundPool.release();
@@ -288,8 +291,9 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
 
-
-    /** Try switching to session. */
+    /**
+     * Try switching to session.
+     */
     public void setCurrentSession(TerminalSession session) {
         if (session == null) return;
 
@@ -378,7 +382,11 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
                 workingDirectory = currentSession.getCwd();
             }
 
-            TermuxSession newTermuxSession = service.createTermuxSession(null, null, null, workingDirectory, isFailSafe, sessionName);
+            if (sessionName != null && sessionName.equals("python")) {
+                workingDirectory = mActivity.getFilesDir().getAbsolutePath();
+            }
+
+            TermuxSession newTermuxSession = service.createTermuxSession(sessionName != null && sessionName.equals("python") ? "python" : null, null, null, workingDirectory, isFailSafe, sessionName);
             if (newTermuxSession == null) return;
 
             TerminalSession newTerminalSession = newTermuxSession.getTerminalSession();
@@ -396,7 +404,9 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
             mActivity.getPreferences().setCurrentSession(null);
     }
 
-    /** The current session as stored or the last one if that does not exist. */
+    /**
+     * The current session as stored or the last one if that does not exist.
+     */
     public TerminalSession getCurrentStoredSessionOrLast() {
         TerminalSession stored = getCurrentStoredSession();
 

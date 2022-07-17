@@ -13,8 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.system.ErrnoException;
-import android.system.Os;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -395,10 +393,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     if (mTermuxService == null) return; // Activity might have been destroyed.
                     try {
                         boolean launchFailsafe = false;
+                        boolean isPython = false;
+
                         if (intent != null && intent.getExtras() != null) {
                             launchFailsafe = intent.getExtras().getBoolean(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
+                            isPython = intent.getBooleanExtra("isPython", false);
                         }
-                        mTermuxTerminalSessionClient.addNewSession(launchFailsafe, null);
+                        mTermuxTerminalSessionClient.addNewSession(launchFailsafe, isPython ? "python" : null);
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
                     }
@@ -560,7 +561,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void setNewSessionButtonView() {
         View newSessionButton = findViewById(R.id.new_session_button);
-        newSessionButton.setOnClickListener(v -> mTermuxTerminalSessionClient.addNewSession(false, null));
+        newSessionButton.setOnClickListener(v -> mTermuxTerminalSessionClient.addNewSession(false, "python"));
         newSessionButton.setOnLongClickListener(v -> {
             TextInputDialogUtils.textInput(TermuxActivity.this, R.string.title_create_named_session, null,
                 R.string.action_create_named_session_confirm, text -> mTermuxTerminalSessionClient.addNewSession(false, text),
